@@ -1,35 +1,43 @@
-import type { Metadata } from "next";
+// /app/layout.tsx
 import "./globals.css";
-import { site } from "../site.config"; // root import; adjusts to your tsconfig paths if needed
+import type { Metadata } from "next";
+import { site } from "@/site.config";
+
+// Use a hero or dedicated OG (1200x630 recommended)
+const ogImage = "/og-image.png"; // put one in /public when ready
+
+// Theme color (kept same simple export style as Zenfit)
+export const viewport = { themeColor: "#10B981" };
 
 export const metadata: Metadata = {
-  title: site.seo.title,
-  description: site.seo.description,
-  keywords: [...site.seo.keywords],
+  title: site.metaTitle,
+  description: site.metaDescription,
   openGraph: {
-    title: site.seo.title,
-    description: site.seo.description,
-    url: site.seo.openGraph.url,
-    siteName: site.seo.openGraph.siteName,
-    images: site.seo.openGraph.image
-      ? [{ url: site.seo.openGraph.image }]
-      : undefined,
-    type: site.seo.openGraph.type as any,
-    locale: site.seo.openGraph.locale,
+    title: site.metaTitle,
+    description: site.metaDescription,
+    url: site.baseUrl,
+    siteName: site.brand,
+    images: [{ url: ogImage, width: 1200, height: 630, alt: `${site.brand}` }],
   },
-  icons: {
-    icon: site.brand.favicon,
+  twitter: {
+    card: "summary_large_image",
+    title: site.metaTitle,
+    description: site.metaDescription,
+    images: [ogImage],
   },
-  metadataBase: new URL(site.seo.openGraph.url),
+  metadataBase: new URL(site.baseUrl),
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={site.locales.default}>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Favicon primary + alternate (PNG since we have /logo.png, not SVG) */}
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="alternate icon" href="/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="theme-color" content="#10B981" />
+      </head>
       <body>{children}</body>
     </html>
   );
