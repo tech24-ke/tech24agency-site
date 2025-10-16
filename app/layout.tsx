@@ -1,43 +1,40 @@
-// /app/layout.tsx
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import type { Metadata } from "next";
-import { site } from "@/site.config";
+import { site } from "../site.config";
 
-// Use a hero or dedicated OG (1200x630 recommended)
-const ogImage = "/og-image.png"; // put one in /public when ready
+// Optional: browser tab color / PWA accent
+export const viewport: Viewport = { themeColor: "#111111" };
 
-// Theme color (kept same simple export style as Zenfit)
-export const viewport = { themeColor: "#10B981" };
+// ---- FIX: derive OGType safely (exclude string from the union) ----
+type OpenGraphObject = Exclude<NonNullable<Metadata["openGraph"]>, string>;
+type OGType = OpenGraphObject extends { type?: infer T } ? T : never;
 
 export const metadata: Metadata = {
-  title: site.metaTitle,
-  description: site.metaDescription,
+  title: site.seo.title,
+  description: site.seo.description,
+  keywords: [...site.seo.keywords], // resolves readonly -> mutable array
   openGraph: {
-    title: site.metaTitle,
-    description: site.metaDescription,
-    url: site.baseUrl,
-    siteName: site.brand,
-    images: [{ url: ogImage, width: 1200, height: 630, alt: `${site.brand}` }],
+    title: site.seo.title,
+    description: site.seo.description,
+    url: site.seo.openGraph.url,
+    siteName: site.seo.openGraph.siteName,
+    images: site.seo.openGraph.image
+      ? [{ url: site.seo.openGraph.image, width: 1200, height: 630 }]
+      : undefined,
+    type: site.seo.openGraph.type as OGType, // ✅ no 'any', no error
+    locale: site.seo.openGraph.locale,
   },
-  twitter: {
-    card: "summary_large_image",
-    title: site.metaTitle,
-    description: site.metaDescription,
-    images: [ogImage],
-  },
-  metadataBase: new URL(site.baseUrl),
+  icons: { icon: site.brand.favicon },
+  metadataBase: new URL(site.seo.openGraph.url),
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Favicon primary + alternate (PNG since we have /logo.png, not SVG) */}
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="alternate icon" href="/logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#10B981" />
-      </head>
+    <html lang={site.locales.default}>
       <body>{children}</body>
     </html>
   );
