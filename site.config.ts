@@ -30,7 +30,7 @@ export const site = {
     openGraph: {
       url: "https://tech24agency.com",
       siteName: "Tech24 Agency",
-      image: "/og-image.png", // optional, place in /public if you add it
+      image: "/logo.png", // optional, place in /public if you add it
       type: "website",
       locale: "en",
     },
