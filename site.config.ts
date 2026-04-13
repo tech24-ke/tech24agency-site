@@ -6,7 +6,7 @@ export const site = {
     logoPath: "/logo.png", // /public/logo.png
     favicon: "/favicon.ico", // already working
     tagline:
-      "Affordable websites and digital tools for small businesses across Africa and beyond.",
+      "Affordable websites and digital tools for small businesses across Europe, Africa and beyond.",
   },
 
   contact: {
